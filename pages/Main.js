@@ -6,14 +6,13 @@ import LoadingIndicator from './component/LoadingIndicator';
 import Search from './component/Search';
 import Debug from './component/Debug';
 // 후반 테스트를 진행할 때 아래 import를 삭제합니다.
-import json from '../resource/flightList';
 
 export default function Main() {
   // 항공편 검색 조건을 담고 있는 상태
   const [condition, setCondition] = useState({
     departure: 'ICN',
   });
-  const [flightList, setFlightList] = useState(json);
+  const [flightList, setFlightList] = useState([]);
 
   // 주어진 검색 키워드에 따라 condition 상태를 변경시켜주는 함수
   const search = ({ departure, destination }) => {
@@ -42,9 +41,13 @@ export default function Main() {
 
   // TODO: Effeck Hook을 이용해 AJAX 요청을 보내보세요.
   // TODO: 더불어, 네트워크 요청이 진행됨을 보여주는 로딩 컴포넌트(<LoadingIndicator/>)를 제공해보세요.
-  // useEffect(() => {
-
-  // }, [])
+  useEffect(() => {
+    getFlight(condition)
+      .then(filtered => {
+        console.log('useefeect실행')
+        setFlightList(filtered)
+      })
+  },[condition])
 
   // TODO: 테스트 케이스의 지시에 따라 search 함수를 Search 컴포넌트로 내려주세요.
   return (
@@ -65,7 +68,8 @@ export default function Main() {
             <div className="col">도착 시각</div>
             <div className="col"></div>
           </div>
-          <FlightList list={flightList.filter(filterByCondition)} />
+          {/* <FlightList list={flightList.filter(filterByCondition)} /> */}
+          <FlightList list={flightList} />
         </div>
 
         <div className="debug-area">
