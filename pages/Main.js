@@ -13,6 +13,7 @@ export default function Main() {
     departure: 'ICN',
   });
   const [flightList, setFlightList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false)
 
   // 주어진 검색 키워드에 따라 condition 상태를 변경시켜주는 함수
   const search = ({ departure, destination }) => {
@@ -26,28 +27,19 @@ export default function Main() {
     }
   };
 
-  const filterByCondition = (flight) => {
-    let pass = true;
-    if (condition.departure) {
-      pass = pass && flight.departure === condition.departure;
-    }
-    if (condition.destination) {
-      pass = pass && flight.destination === condition.destination;
-    }
-    return pass;
-  };
-
   global.search = search; // 실행에는 전혀 지장이 없지만, 테스트를 위해 필요한 코드입니다. 이 코드는 지우지 마세요!
 
   // TODO: Effeck Hook을 이용해 AJAX 요청을 보내보세요.
   // TODO: 더불어, 네트워크 요청이 진행됨을 보여주는 로딩 컴포넌트(<LoadingIndicator/>)를 제공해보세요.
   useEffect(() => {
+    setIsLoading(true);
     getFlight(condition)
       .then(filtered => {
         console.log('useefeect실행')
         setFlightList(filtered)
+        setIsLoading(false)
       })
-  },[condition])
+  },[condition]);
 
   // TODO: 테스트 케이스의 지시에 따라 search 함수를 Search 컴포넌트로 내려주세요.
   return (
@@ -69,7 +61,12 @@ export default function Main() {
             <div className="col"></div>
           </div>
           {/* <FlightList list={flightList.filter(filterByCondition)} /> */}
-          <FlightList list={flightList} />
+          {/* <FlightList list={flightList} /> */}
+          {/* {<LoadingIndicator/>} */}
+          {isLoading
+            ? <LoadingIndicator/>
+            : <FlightList list={flightList}/>
+          }
         </div>
 
         <div className="debug-area">
